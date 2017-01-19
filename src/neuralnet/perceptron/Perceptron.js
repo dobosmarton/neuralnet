@@ -18,8 +18,6 @@ const perceptron = ({
     /// PRIVATE ///
 
     let output;
-    let gradient = 0.2;
-
     /**
      * Ha nem adtuk meg a súlyokat, akkor random generáljuk őket
      */
@@ -42,28 +40,18 @@ const perceptron = ({
       }
       output = activationFunction(newOutput);
     }
-
-    const computeGradient = (weight, outputGradient) => {
-      gradient = output * (1 - output) * weight * outputGradient;
-    }
-
     /**
      * Visszatér a perceptron kimenetével
      */
     const getOutput = () => output;
-
-    const getGradient = () => gradient;
-
     /**
      * Visszatér a biassal
      */
     const getBias = () => bias;
-
     /**
      * Visszatér a megadott indexű bemenet súlyával
      */
     const getWeight = index => inputWeights[index];
-
     /**
      * A modell visszatér a publikusan elérhető függvényekkel,
      * kívülről ezeket lehet elérni
@@ -71,7 +59,6 @@ const perceptron = ({
     const publicAttrs = {
       computeOutput: computeOutput,
       getOutput: getOutput,
-      getGradient: getGradient,
       getBias: getBias,
       getWeight: getWeight
     };
