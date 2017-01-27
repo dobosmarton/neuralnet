@@ -12,10 +12,11 @@ import perceptron from '../perceptron/perceptron';
 const net = ({
   numInputNeurons,
   numHiddenNeurons,
+  numOutputNeurons = 1,
   learningFactor = 0.3,
   initalWeightClamp = 0.5,
   hiddenLayer = [],
-  outputLayer = perceptron(numHiddenNeurons, initalWeightClamp)
+  outputLayer = [perceptron(numHiddenNeurons, initalWeightClamp)]
 }) => {
 
     /**
@@ -36,13 +37,30 @@ const net = ({
      */
     const computeOutput = inputs => {
       hiddenLayer.forEach(neuron => neuron.computeOutput(inputs));
-      outputLayer.computeOutput(hiddenLayer.map(neuron => neuron.getOutput()));
+      outputLayer.forEach(neuron => neuron.computeOutput(hiddenLayer.map(neuron => neuron.getOutput())));
     }
+
+    const backPropError = expectedOutput => {
+      const outputErrors = outputLayer.map((neuron, index) => {
+        const error = expectedOutput[index] - neuron.getOutput();
+        neuron.setDelta(error);
+        return error;
+      });
+      const hiddenErrors = hiddenLayer.map((hiddenNeuron, index) => {
+        const error = outputLayer
+                        .map(outputNeuron => outputNeuron.getWeight[index] * outputNeuron.getDelta())
+                        .reduce((a, b) => a + b, 0);
+        hiddenNeuron.setDelta(error);
+        return error;
+      });
+    }
+
+    const updateWeights = row => {}
 
     /**
      * Visszaadjuk a hálózat kimenetét
      */
-    const getOutput = () => outputLayer.getOutput();
+    const getOutput = index => index ? outputLayer[index].getOutput() : outputLayer[0].getOutput();
 
     /**
      * A modell visszatér a publikusan elérhető függvényekkel,

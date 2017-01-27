@@ -126,10 +126,11 @@
 	var attrsXOR = {
 	  numInputNeurons: 2,
 	  numHiddenNeurons: 2,
+	  numOutputNeurons: 1,
 	  learningFactor: 0.3,
 	  initalWeightClamp: 1.0,
 	  hiddenLayer: [percOR, percNAND],
-	  outputLayer: percAND
+	  outputLayer: [percAND]
 	};
 
 	var netXOR = (0, _neuralnet.net)(attrsXOR);
@@ -181,7 +182,7 @@
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 
 	var _tanh = __webpack_require__(4);
@@ -199,89 +200,74 @@
 	 * @param activationFunction: definiálhatunk saját aktivációs függvényt
 	 */
 	var perceptron = function perceptron(_ref) {
-	    var numInputs = _ref.numInputs,
-	        _ref$initalWeightClam = _ref.initalWeightClamp,
-	        initalWeightClamp = _ref$initalWeightClam === undefined ? 0 : _ref$initalWeightClam,
-	        _ref$inputWeights = _ref.inputWeights,
-	        inputWeights = _ref$inputWeights === undefined ? [] : _ref$inputWeights,
-	        _ref$bias = _ref.bias,
-	        bias = _ref$bias === undefined ? 2 * (Math.random() - 0.5) * initalWeightClamp : _ref$bias,
-	        _ref$activationFuncti = _ref.activationFunction,
-	        activationFunction = _ref$activationFuncti === undefined ? function (output) {
-	        return (0, _tanh2.default)(output);
-	    } : _ref$activationFuncti;
+	  var numInputs = _ref.numInputs,
+	      _ref$initalWeightClam = _ref.initalWeightClamp,
+	      initalWeightClamp = _ref$initalWeightClam === undefined ? 0 : _ref$initalWeightClam,
+	      _ref$inputWeights = _ref.inputWeights,
+	      inputWeights = _ref$inputWeights === undefined ? [] : _ref$inputWeights,
+	      _ref$bias = _ref.bias,
+	      bias = _ref$bias === undefined ? 2 * (Math.random() - 0.5) * initalWeightClamp : _ref$bias,
+	      _ref$activationFuncti = _ref.activationFunction,
+	      activationFunction = _ref$activationFuncti === undefined ? function (output) {
+	    return (0, _tanh2.default)(output);
+	  } : _ref$activationFuncti;
 
 
-	    /// PRIVATE ///
+	  /// PRIVATE ///
 
-	    var output = void 0;
-	    var gradient = 0.2;
-
-	    /**
-	     * Ha nem adtuk meg a súlyokat, akkor random generáljuk őket
-	     */
-	    if (inputWeights.length === 0) {
-	        for (var i = 0; i < numInputs; i++) {
-	            inputWeights[i] = 2 * (Math.random() - 0.5) * initalWeightClamp;
-	        }
+	  var output = void 0;
+	  /**
+	   * Ha nem adtuk meg a súlyokat, akkor random generáljuk őket
+	   */
+	  if (inputWeights.length === 0) {
+	    for (var i = 0; i < numInputs; i++) {
+	      inputWeights[i] = 2 * (Math.random() - 0.5) * initalWeightClamp;
 	    }
+	  }
 
-	    /// PUBLIC ///
+	  /// PUBLIC ///
 
-	    /**
-	     * A bemenet függvényében kiszámoljuk a perceptron kimenetét
-	     * @param inputs: bemenet
-	     */
-	    var computeOutput = function computeOutput(inputs) {
-	        var newOutput = bias;
-	        for (var _i = 0; _i < inputs.length; _i++) {
-	            newOutput += inputWeights[_i] * inputs[_i];
-	        }
-	        output = activationFunction(newOutput);
-	    };
+	  /**
+	   * A bemenet függvényében kiszámoljuk a perceptron kimenetét
+	   * @param inputs: bemenet
+	   */
+	  var computeOutput = function computeOutput(inputs) {
+	    var newOutput = bias;
+	    for (var _i = 0; _i < inputs.length; _i++) {
+	      newOutput += inputWeights[_i] * inputs[_i];
+	    }
+	    output = activationFunction(newOutput);
+	  };
+	  /**
+	   * Visszatér a perceptron kimenetével
+	   */
+	  var getOutput = function getOutput() {
+	    return output;
+	  };
+	  /**
+	   * Visszatér a biassal
+	   */
+	  var getBias = function getBias() {
+	    return bias;
+	  };
+	  /**
+	   * Visszatér a megadott indexű bemenet súlyával
+	   */
+	  var getWeight = function getWeight(index) {
+	    return inputWeights[index];
+	  };
+	  /**
+	   * A modell visszatér a publikusan elérhető függvényekkel,
+	   * kívülről ezeket lehet elérni
+	   */
+	  var publicAttrs = {
+	    computeOutput: computeOutput,
+	    getOutput: getOutput,
+	    getBias: getBias,
+	    getWeight: getWeight
+	  };
 
-	    var computeGradient = function computeGradient(weight, outputGradient) {
-	        gradient = output * (1 - output) * weight * outputGradient;
-	    };
-
-	    /**
-	     * Visszatér a perceptron kimenetével
-	     */
-	    var getOutput = function getOutput() {
-	        return output;
-	    };
-
-	    var getGradient = function getGradient() {
-	        return gradient;
-	    };
-
-	    /**
-	     * Visszatér a biassal
-	     */
-	    var getBias = function getBias() {
-	        return bias;
-	    };
-
-	    /**
-	     * Visszatér a megadott indexű bemenet súlyával
-	     */
-	    var getWeight = function getWeight(index) {
-	        return inputWeights[index];
-	    };
-
-	    /**
-	     * A modell visszatér a publikusan elérhető függvényekkel,
-	     * kívülről ezeket lehet elérni
-	     */
-	    var publicAttrs = {
-	        computeOutput: computeOutput,
-	        getOutput: getOutput,
-	        getGradient: getGradient,
-	        getBias: getBias,
-	        getWeight: getWeight
-	    };
-
-	    return publicAttrs;
+	  return publicAttrs;
 	};
 
 	exports.default = perceptron;
@@ -599,6 +585,8 @@
 	var net = function net(_ref) {
 	    var numInputNeurons = _ref.numInputNeurons,
 	        numHiddenNeurons = _ref.numHiddenNeurons,
+	        _ref$numOutputNeurons = _ref.numOutputNeurons,
+	        numOutputNeurons = _ref$numOutputNeurons === undefined ? 1 : _ref$numOutputNeurons,
 	        _ref$learningFactor = _ref.learningFactor,
 	        learningFactor = _ref$learningFactor === undefined ? 0.3 : _ref$learningFactor,
 	        _ref$initalWeightClam = _ref.initalWeightClamp,
@@ -606,7 +594,7 @@
 	        _ref$hiddenLayer = _ref.hiddenLayer,
 	        hiddenLayer = _ref$hiddenLayer === undefined ? [] : _ref$hiddenLayer,
 	        _ref$outputLayer = _ref.outputLayer,
-	        outputLayer = _ref$outputLayer === undefined ? (0, _perceptron2.default)(numHiddenNeurons, initalWeightClamp) : _ref$outputLayer;
+	        outputLayer = _ref$outputLayer === undefined ? [(0, _perceptron2.default)(numHiddenNeurons, initalWeightClamp)] : _ref$outputLayer;
 
 
 	    /**
@@ -629,16 +617,18 @@
 	        hiddenLayer.forEach(function (neuron) {
 	            return neuron.computeOutput(inputs);
 	        });
-	        outputLayer.computeOutput(hiddenLayer.map(function (neuron) {
-	            return neuron.getOutput();
-	        }));
+	        outputLayer.forEach(function (neuron) {
+	            return neuron.computeOutput(hiddenLayer.map(function (neuron) {
+	                return neuron.getOutput();
+	            }));
+	        });
 	    };
 
 	    /**
 	     * Visszaadjuk a hálózat kimenetét
 	     */
-	    var getOutput = function getOutput() {
-	        return outputLayer.getOutput();
+	    var getOutput = function getOutput(index) {
+	        return index ? outputLayer[index].getOutput() : outputLayer[0].getOutput();
 	    };
 
 	    /**

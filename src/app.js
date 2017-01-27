@@ -69,13 +69,14 @@ console.log('perceptron OR [1, 1]', percOR.getOutput() > 0);
 const attrsXOR = {
   numInputNeurons: 2,
   numHiddenNeurons: 2,
+  numOutputNeurons: 1,
   learningFactor: 0.3,
   initalWeightClamp: 1.0,
   hiddenLayer: [
     percOR,
     percNAND
   ],
-  outputLayer: percAND
+  outputLayer: [percAND]
 };
 
 const netXOR = net(attrsXOR);
@@ -95,8 +96,3 @@ console.log('perceptron XOR [1, 0]', netXOR.getOutput() > 0);
 netXOR.computeOutput([1, 1]);
 
 console.log('perceptron XOR [1, 1]', netXOR.getOutput() > 0);
-
-
-
-
-
